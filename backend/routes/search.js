@@ -4,24 +4,20 @@ import pool from "../db.js";
 const router = express.Router();
 
 router.post("/", async (req, res) => {
-  const { q, methodes, problemes } = req.body;
+  const { q, methodes, proprietes, problemes } = req.body;
 
   let conditions = [];
   let values = [];
   let i = 1;
 
-  if (q) {
-    conditions.push(`
-      (
-        nom_scientifique ILIKE $${i}
-        OR nom_vernaculaire ILIKE $${i}
-        OR famille ILIKE $${i}
-      )
-    `);
+  // Recherche texte sur nom vernaculaire uniquement
+  if (q && q.trim() !== "") {
+    conditions.push(`nom_vernaculaire ILIKE $${i}`);
     values.push(`%${q}%`);
     i++;
   }
 
+  // Méthodes
   if (methodes?.length) {
     conditions.push(`
       EXISTS (
@@ -34,12 +30,26 @@ router.post("/", async (req, res) => {
     i++;
   }
 
+  // Propriétés
+  if (proprietes?.length) {
+    conditions.push(`
+      EXISTS (
+        SELECT 1
+        FROM unnest(string_to_array(proprietes_principales, '|')) p
+        WHERE trim(p) = ANY($${i})
+      )
+    `);
+    values.push(proprietes);
+    i++;
+  }
+
+  // Problèmes
   if (problemes?.length) {
     conditions.push(`
       EXISTS (
         SELECT 1
-        FROM unnest(string_to_array(resolution_probleme, '|')) p
-        WHERE trim(p) = ANY($${i})
+        FROM unnest(string_to_array(resolution_probleme, '|')) r
+        WHERE trim(r) = ANY($${i})
       )
     `);
     values.push(problemes);
@@ -51,7 +61,7 @@ router.post("/", async (req, res) => {
     : "";
 
   const query = `
-    SELECT id, nom_vernaculaire, nom_scientifique, famille
+    SELECT *
     FROM plantes
     ${whereClause}
     ORDER BY nom_vernaculaire
@@ -62,7 +72,7 @@ router.post("/", async (req, res) => {
     const result = await pool.query(query, values);
     res.json(result.rows);
   } catch (err) {
-    console.error("Erreur recherche:", err);
+    console.error("Erreur recherche multicritère :", err);
     res.status(500).json({ error: "Erreur recherche" });
   }
 });
