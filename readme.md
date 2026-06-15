@@ -14,6 +14,10 @@ nvm use 18.13.0
 launch project : npx webpack serve
 or npm start
 
+# access to db
+psql postgres
+exit > \q
+
 # launch project
 
 cd backend: node index.js

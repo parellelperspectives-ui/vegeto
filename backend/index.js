@@ -5,6 +5,7 @@ import pool from "./db.js";
 import autocompleteRoutes from "./routes/autocomplete.js";
 import searchRoutes from "./routes/search.js";
 import optionsRoutes from "./routes/options.js";
+import lexiqueRouter from "./routes/lexique.js";
 
 const app = express();
 
@@ -16,6 +17,7 @@ app.use(express.json());
 app.use("/api/plantes", plantesRoutes);
 app.use("/api/autocomplete", autocompleteRoutes);
 app.use("/api/options", optionsRoutes)
+app.use("/api/lexique", lexiqueRouter);
 
 const PORT = 3001;
 const info = await pool.query(`
