@@ -1,0 +1,23 @@
+# Dependencies
+node_modules/
+frontend/node_modules/
+backend/node_modules/
+
+# Build
+frontend/build/
+frontend/android/
+
+# Environment
+.env
+frontend/.env
+backend/.env
+
+# Keystore
+*.jks
+*.keystore
+
+# Logs
+*.log
+
+# OS
+.DS_Store
