@@ -10,31 +10,32 @@ import lexiqueRouter from "./routes/lexique.js";
 const app = express();
 
 app.use(cors({
-  origin: "http://localhost:3000"
+  origin: [
+    "http://localhost:3000",
+    "https://ton-domaine-frontend.com",
+    /\.railway\.app$/
+  ]
 }));
+
 app.use(express.json());
 
 app.use("/api/plantes", plantesRoutes);
 app.use("/api/autocomplete", autocompleteRoutes);
-app.use("/api/options", optionsRoutes)
+app.use("/api/options", optionsRoutes);
 app.use("/api/lexique", lexiqueRouter);
-
-const PORT = 3001;
-const info = await pool.query(`
-  SELECT
-    current_database(),
-    inet_server_port(),
-    current_setting('data_directory') AS data_directory
-`);
-
-console.log("DB INFO NODE:", info.rows[0]);
-app.listen(PORT, () => {
-  console.log(`🌿 API backend sur http://localhost:${PORT}`);
-});
-
 app.use("/api/search", searchRoutes);
 
+const PORT = process.env.PORT || 3001;
 
+try {
+  const info = await pool.query(`
+    SELECT current_database(), inet_server_port()
+  `);
+  console.log("DB INFO:", info.rows[0]);
+} catch (err) {
+  console.error("DB connection error:", err.message);
+}
 
-
-
+app.listen(PORT, () => {
+  console.log(`🌿 API backend sur le port ${PORT}`);
+});
