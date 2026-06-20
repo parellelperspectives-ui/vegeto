@@ -12,7 +12,8 @@ const app = express();
 app.use(cors({
   origin: [
     "http://localhost:3000",
-    "https://ton-domaine-frontend.com",
+    "https://parallel-perspectives.com",
+    "https://www.parallel-perspectives.com",
     /\.railway\.app$/
   ]
 }));
