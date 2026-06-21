@@ -10,9 +10,10 @@ import { useState } from "react";
 
 function App() {
   const [randomPlantTrigger, setRandomPlantTrigger] = useState(null);
+  const isWeb = window.location.hostname !== "localhost" && !window.location.href.startsWith("capacitor");
 
   return (
-    <Router>
+    <Router basename={isWeb ? "/app/vegeto" : "/"}>
       <DisclaimerModal />
       <Header onRandomPlant={randomPlantTrigger} />
       <main className="pt-4">

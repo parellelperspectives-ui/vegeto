@@ -3,6 +3,7 @@ import SearchBar from "../components/SearchBar";
 import PlanteFiche from "../components/PlanteFiche";
 import API_URL from "../config";
 import Filtres from "../components/MultiFilters";
+import { useLocation } from "react-router-dom";
 
 export default function Home({ onRegisterRandom }) {
   const [results, setResults] = useState([]);
@@ -10,7 +11,7 @@ export default function Home({ onRegisterRandom }) {
   const [showFiltres, setShowFiltres] = useState(false);
   const [searchLaunched, setSearchLaunched] = useState(false);
   const [filtres, setFiltres] = useState({ methode: "", probleme: "" });
-
+  const location = useLocation();
    const loadRandomPlant = async () => {
     setResults([]);
     setSearchLaunched(false);
@@ -67,8 +68,18 @@ export default function Home({ onRegisterRandom }) {
   };
 
   
-
   useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    if (params.get("random") === "true") {
+      loadRandomPlant();
+      // Nettoie l'URL sans recharger la page
+      window.history.replaceState({}, "", "/app/vegeto");
+    } else {
+      loadRandomPlant();
+    }
+  }, [location.search]);
+  
+    useEffect(() => {
     loadRandomPlant();
   }, []);
 

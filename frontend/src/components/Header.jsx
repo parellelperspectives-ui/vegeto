@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { Home, BookOpen, MapPin, Shuffle, Menu, X } from "lucide-react";
 
 export default function Header({ onRandomPlant }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const location = useLocation();
-
+ const navigate = useNavigate()
   const closeMenu = () => setMenuOpen(false);
 
   const navLinkClass = ({ isActive }) =>
@@ -22,6 +22,7 @@ export default function Header({ onRandomPlant }) {
         : "text-gray-600 hover:bg-green-50 hover:text-green-700"
     }`;
 
+
   return (
     <header className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
       <div className="max-w-3xl mx-auto px-4 h-14 flex items-center justify-between">
@@ -32,7 +33,7 @@ export default function Header({ onRandomPlant }) {
           onClick={closeMenu}
           className="flex items-center gap-1.5 text-xl font-bold text-green-700 tracking-tight"
         >
-          <img src="/images/logo-vegeto.svg" alt="Vegeto" className="h-8 w-auto" />
+          <img src={`${process.env.PUBLIC_URL}/images/logo-vegeto.svg`} alt="Vegeto" className="h-8 w-auto" />
         </NavLink>
 
         {/* Navigation desktop — masquée sur mobile */}
@@ -42,9 +43,9 @@ export default function Header({ onRandomPlant }) {
             Accueil
           </NavLink>
 
-          {location.pathname === "/" && onRandomPlant && (
+          {onRandomPlant && (
             <button
-              onClick={onRandomPlant}
+              onClick={() => navigate("/?random=true")}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium border transition-colors text-gray-600 border-gray-300 hover:border-green-700 hover:text-green-700 bg-white"
             >
               <Shuffle size={15} />
@@ -95,8 +96,8 @@ export default function Header({ onRandomPlant }) {
 
           {onRandomPlant && (
             <button
-              onClick={() => { onRandomPlant(); closeMenu(); }}
-              className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-600 hover:bg-green-50 hover:text-green-700 transition-colors"
+              onClick={() => { navigate("/?random=true"); closeMenu(); }}
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors text-gray-600 hover:bg-green-50 hover:text-green-700"
             >
               <Shuffle size={18} />
               Plante aléatoire

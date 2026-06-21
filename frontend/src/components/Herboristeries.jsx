@@ -138,7 +138,7 @@ const commercesFiltres = filtreType === "tous"
   return (
     <div className="max-w-3xl mx-auto p-4">
 
-  <h1 className="flex items-center gap-1 text-xl font-bold text-gray-800 mb-1">
+  <h1 className="flex items-center gap-1 font-bold text-gray-800 mb-4">
     <MapPin size={24} className="text-green-700"  /> Trouver un commerce près de chez vous
   </h1>
 

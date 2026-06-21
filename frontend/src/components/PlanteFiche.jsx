@@ -6,11 +6,11 @@ export default function PlanteFiche({ plante }) {
       {/* Image */}
       <div className="w-full bg-gray-100">
         <img
-          src={`/images/plantes/${plante.image_filename}`}
+          src={`${process.env.PUBLIC_URL}/images/plantes/${plante.image_filename}`}
           alt={plante.nom_vernaculaire}
-          className="w-full h-80 md:h-96 object-cover"
+          className="w-full h-40 md:h-80 object-cover"
           onError={(e) => {
-            e.currentTarget.src = "/images/plantes/default.jpg";
+            e.currentTarget.src = `${process.env.PUBLIC_URL}/images/plantes/default.jpg`;
           }}
         />
       </div>
@@ -19,11 +19,11 @@ export default function PlanteFiche({ plante }) {
       <div className="p-6 md:p-8">
         {/* En-tête */}
         <div className="mb-6">
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900">
+          <h1 className="text-[1.2rem] md:text-3xl font-bold text-gray-900">
             {plante.nom_vernaculaire}
           </h1>
 
-          <p className="mt-2 italic text-lg text-gray-600">
+          <p className="mt-2 italic text-gray-600">
             {plante.nom_scientifique}
           </p>
 
