@@ -9,6 +9,10 @@ import Footer from "./components/Footer";
 import IdentifyPlante from "./components/IdentifyPlante";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { Capacitor } from "@capacitor/core";
+import { initDB, syncData } from "./services/db";
+import API_URL from "./config";
 
 function IdentifyPage() {
   const navigate = useNavigate();
@@ -27,6 +31,15 @@ function IdentifyPage() {
 function App() {
   const [randomPlantTrigger, setRandomPlantTrigger] = useState(null);
   const isWeb = window.location.hostname !== "localhost" && !window.location.href.startsWith("capacitor");
+
+    useEffect(() => {
+    const initAndSync = async () => {
+      if (!Capacitor.isNativePlatform()) return;
+      await initDB();
+      await syncData(API_URL);
+    };
+    initAndSync();
+  }, []);
 
   return (
     <Router basename={isWeb ? "/app/vegeto" : "/"}>

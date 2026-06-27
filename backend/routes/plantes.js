@@ -1,5 +1,6 @@
 import express from "express";
 import pool from "../db.js";
+const { q, methode, probleme, limit } = req.query;
 
 const router = express.Router();
 
@@ -59,11 +60,10 @@ router.get("/", async (req, res) => {
     : "";
 
   const query = `
-    SELECT *
-    FROM plantes
+    SELECT * FROM plantes
     ${whereClause}
     ORDER BY nom_vernaculaire
-    LIMIT 50
+    LIMIT ${limit ? parseInt(limit) : 50}
   `;
 
   try {
