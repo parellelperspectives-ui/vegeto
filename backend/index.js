@@ -7,6 +7,8 @@ import searchRoutes from "./routes/search.js";
 import optionsRoutes from "./routes/options.js";
 import lexiqueRouter from "./routes/lexique.js";
 import identifyRouter from "./routes/identify.js";
+import dotenv from "dotenv";
+dotenv.config();
 
 const app = express();
 

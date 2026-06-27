@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
-import { Home, BookOpen, MapPin, Shuffle, Menu, X } from "lucide-react";
+import { Home, BookOpen, MapPin, Shuffle, Menu, X, Camera } from "lucide-react";
 
 export default function Header({ onRandomPlant }) {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -53,6 +53,11 @@ export default function Header({ onRandomPlant }) {
             </button>
           )}
 
+          <NavLink to="/identifier" className={navLinkClass}>
+            <Camera size={15} />
+            Identifier
+          </NavLink>
+
           <NavLink to="/lexique" className={navLinkClass}>
             <BookOpen size={15} />
             Lexique
@@ -82,6 +87,11 @@ export default function Header({ onRandomPlant }) {
           <NavLink to="/" end className={mobileNavLinkClass} onClick={closeMenu}>
             <Home size={18} />
             Accueil
+          </NavLink>
+
+          <NavLink to="/identifier" className={mobileNavLinkClass} onClick={closeMenu}>
+            <Camera size={18} />
+            Identifier une plante
           </NavLink>
 
           <NavLink to="/lexique" className={mobileNavLinkClass} onClick={closeMenu}>

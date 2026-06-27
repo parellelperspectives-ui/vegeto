@@ -6,7 +6,23 @@ import Lexique from "./pages/Lexique";
 import Header from "./components/Header";
 import DisclaimerModal from "./components/DisclaimerModal";
 import Footer from "./components/Footer";
+import IdentifyPlante from "./components/IdentifyPlante";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
+function IdentifyPage() {
+  const navigate = useNavigate();
+  
+  return (
+    <IdentifyPlante
+      onPlanteFound={(plante) => {
+        navigate(`/plante/${plante.id}`);
+          console.log("Navigation vers :", `/plante/${plante.id}`);
+      }}
+    />
+  );
+}
+
 
 function App() {
   const [randomPlantTrigger, setRandomPlantTrigger] = useState(null);
@@ -25,6 +41,7 @@ function App() {
           <Route path="/plante/:id" element={<Plante />} />
           <Route path="/herboristeries" element={<Herboristeries />} />
           <Route path="/lexique" element={<Lexique />} />
+          <Route path="/identifier" element={<IdentifyPage />} />
         </Routes>
       </main>
       <Footer />
