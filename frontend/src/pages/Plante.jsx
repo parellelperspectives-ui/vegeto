@@ -1,7 +1,9 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { Capacitor } from "@capacitor/core";
 import API_URL from "../config";
 import PlanteFiche from "../components/PlanteFiche";
+import { getPlantByIdLocale } from "../services/db";
 
 export default function Plante() {
   const { id } = useParams();
@@ -10,16 +12,27 @@ export default function Plante() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`${API_URL}/api/plantes/${id}`)
-      .then((res) => res.json())
-      .then((data) => {
-        setPlante(data);
-        setLoading(false);
-      })
-      .catch((err) => {
+    const load = async () => {
+      try {
+        if (Capacitor.isNativePlatform() && !navigator.onLine) {
+          const data = await getPlantByIdLocale(id);
+          setPlante(data);
+        } else {
+          const res = await fetch(`${API_URL}/api/plantes/${id}`);
+          const data = await res.json();
+          setPlante(data);
+        }
+      } catch (err) {
+        if (Capacitor.isNativePlatform()) {
+          const data = await getPlantByIdLocale(id);
+          setPlante(data);
+        }
         console.error(err);
+      } finally {
         setLoading(false);
-      });
+      }
+    };
+    load();
   }, [id]);
 
   if (loading) return (

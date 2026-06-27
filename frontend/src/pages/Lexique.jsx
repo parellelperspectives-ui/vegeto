@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import API_URL from "../config";
 import { BookOpen, Leaf, Stethoscope, FlaskConical, LayoutGrid } from "lucide-react";
+import { Capacitor } from "@capacitor/core";
 
 const CATEGORIES = [
   { value: "tous", label: "Toutes les catégories", icon: <LayoutGrid size={15} /> },
@@ -29,38 +30,63 @@ export default function Lexique() {
     setShowSuggestions(false);
   }, [categorie]);
 
-  const chargerTermes = async (recherche, cat) => {
-    setLoading(true);
-    try {
-      const params = new URLSearchParams();
-      if (recherche) params.append("q", recherche);
-      if (cat && cat !== "tous") params.append("categorie", cat);
-      const res = await fetch(`${API_URL}/api/lexique?${params.toString()}`);
-      const data = await res.json();
-      setResultats(data);
-    } catch (err) {
-      console.error("Erreur lexique :", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const chargerSuggestions = async (valeur) => {
-    if (valeur.length < 2) {
-      setSuggestions([]);
+ const chargerTermes = async (recherche, cat) => {
+  setLoading(true);
+  try {
+    // Mode hors ligne sur Android
+    if (Capacitor.isNativePlatform() && !navigator.onLine) {
+      const data = await getLexiqueLocal(recherche, cat);
+      setResultats(data || []);
       return;
     }
-    try {
-      const params = new URLSearchParams({ q: valeur });
-      if (categorie !== "tous") params.append("categorie", categorie);
-      const res = await fetch(`${API_URL}/api/lexique/termes?${params.toString()}`);
-      const data = await res.json();
-      setSuggestions(data);
-      setShowSuggestions(true);
-    } catch (err) {
-      console.error("Erreur suggestions :", err);
+    // Mode en ligne
+    const params = new URLSearchParams();
+    if (recherche) params.append("q", recherche);
+    if (cat && cat !== "tous") params.append("categorie", cat);
+    const res = await fetch(`${API_URL}/api/lexique?${params.toString()}`);
+    const data = await res.json();
+    setResultats(data);
+  } catch (err) {
+    // Fallback local
+    if (Capacitor.isNativePlatform()) {
+      const data = await getLexiqueLocal(recherche, cat);
+      setResultats(data || []);
     }
-  };
+    console.error("Erreur lexique :", err);
+  } finally {
+    setLoading(false);
+  }
+};
+
+ const chargerSuggestions = async (valeur) => {
+  if (valeur.length < 2) {
+    setSuggestions([]);
+    return;
+  }
+  try {
+    // Mode hors ligne — filtre directement depuis les résultats locaux
+    if (Capacitor.isNativePlatform() && !navigator.onLine) {
+      const data = await getLexiqueLocal(valeur, categorie);
+      setSuggestions(data?.slice(0, 10) || []);
+      setShowSuggestions(true);
+      return;
+    }
+    // Mode en ligne
+    const params = new URLSearchParams({ q: valeur });
+    if (categorie !== "tous") params.append("categorie", categorie);
+    const res = await fetch(`${API_URL}/api/lexique/termes?${params.toString()}`);
+    const data = await res.json();
+    setSuggestions(data);
+    setShowSuggestions(true);
+  } catch (err) {
+    if (Capacitor.isNativePlatform()) {
+      const data = await getLexiqueLocal(valeur, categorie);
+      setSuggestions(data?.slice(0, 10) || []);
+      setShowSuggestions(true);
+    }
+    console.error("Erreur suggestions :", err);
+  }
+};
 
   const handleInputChange = (e) => {
     const valeur = e.target.value;
