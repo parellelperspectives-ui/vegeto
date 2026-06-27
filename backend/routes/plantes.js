@@ -1,6 +1,5 @@
 import express from "express";
 import pool from "../db.js";
-const { q, methode, probleme, limit } = req.query;
 
 const router = express.Router();
 

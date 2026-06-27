@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import API_URL from "../config";
 import { BookOpen, Leaf, Stethoscope, FlaskConical, LayoutGrid } from "lucide-react";
 import { Capacitor } from "@capacitor/core";
+import { getLexiqueLocal } from "../services/db";
+
 
 const CATEGORIES = [
   { value: "tous", label: "Toutes les catégories", icon: <LayoutGrid size={15} /> },
