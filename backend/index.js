@@ -6,6 +6,7 @@ import autocompleteRoutes from "./routes/autocomplete.js";
 import searchRoutes from "./routes/search.js";
 import optionsRoutes from "./routes/options.js";
 import lexiqueRouter from "./routes/lexique.js";
+import identifyRouter from "./routes/identify.js";
 
 const app = express();
 
@@ -25,6 +26,7 @@ app.use("/api/autocomplete", autocompleteRoutes);
 app.use("/api/options", optionsRoutes);
 app.use("/api/lexique", lexiqueRouter);
 app.use("/api/search", searchRoutes);
+app.use("/api/identify", identifyRouter);
 
 const PORT = process.env.PORT || 3001;
 
