@@ -8,7 +8,7 @@ const router = express.Router();
  * /api/plantes?q=&methode=&propriete=&probleme=
  */
 router.get("/", async (req, res) => {
-  const { q, methode, propriete, probleme } = req.query;
+  const { q, methode, propriete, probleme, limit } = req.query;
 
   let conditions = [];
   let values = [];
