@@ -113,6 +113,24 @@ export default function Home({ onRegisterRandom }) {
     setShowFiltres(!showFiltres);
   };
 
+  const checkConnectivity = async () => {
+  try {
+    const res = await fetch(`${API_URL}/api/plantes/random`, {
+      method: "HEAD",
+      cache: "no-cache"
+    });
+    setIsOffline(!res.ok);
+  } catch {
+    setIsOffline(true);
+  }
+};
+
+useEffect(() => {
+  checkConnectivity();
+  const interval = setInterval(checkConnectivity, 30000); // vérifie toutes les 30s
+  return () => clearInterval(interval);
+}, []);
+
   useEffect(() => {
     loadRandomPlant();
   }, []);
