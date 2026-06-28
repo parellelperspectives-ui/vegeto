@@ -15,6 +15,7 @@ const app = express();
 app.use(cors({
   origin: [
     "http://localhost:3000",
+    "https://localhost",
     "https://parallel-perspectives.com",
     "https://www.parallel-perspectives.com",
     /\.railway\.app$/

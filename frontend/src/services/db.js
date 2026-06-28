@@ -76,6 +76,16 @@ export const syncData = async (apiUrl) => {
   if (!Capacitor.isNativePlatform()) return;
   if (!db) await initDB();
 
+    console.log("Début sync, URL:", apiUrl);
+  console.log("Navigator online:", navigator.onLine);
+
+  try {
+    const testRes = await fetch(`${apiUrl}/api/plantes/random`);
+    console.log("Test fetch status:", testRes.status);
+  } catch (err) {
+    console.error("Test fetch error:", err.message, err);
+  }
+
   try {
     // Vérifie la connexion réseau
     const [plantesRes, lexiqueRes] = await Promise.all([

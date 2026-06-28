@@ -5,7 +5,11 @@ const config: CapacitorConfig = {
   "appName": "Vegeto",
   "webDir": "build",
   "server": {
-    "androidScheme": "https"
+    "androidScheme": "https",
+    "cleartext": true,
+    "allowNavigation": [
+      "vegeto-production.up.railway.app"
+    ]
   },
   "plugins": {
     "CapacitorSQLite": {
