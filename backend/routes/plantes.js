@@ -54,6 +54,8 @@ router.get("/", async (req, res) => {
     i++;
   }
 
+  const limitValue = limit ? parseInt(limit) : 50;
+
   const whereClause = conditions.length
     ? "WHERE " + conditions.join(" AND ")
     : "";
@@ -62,8 +64,10 @@ router.get("/", async (req, res) => {
     SELECT * FROM plantes
     ${whereClause}
     ORDER BY nom_vernaculaire
-    LIMIT ${limit ? parseInt(limit) : 50}
+    LIMIT $${i}
   `;
+
+values.push(limitValue);
 
   try {
     const result = await pool.query(query, values);

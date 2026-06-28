@@ -79,6 +79,7 @@ export const syncData = async (apiUrl) => {
     console.log("Début sync, URL:", apiUrl);
   console.log("Navigator online:", navigator.onLine);
 
+
   try {
     const testRes = await fetch(`${apiUrl}/api/plantes/random`);
     console.log("Test fetch status:", testRes.status);
@@ -98,12 +99,13 @@ export const syncData = async (apiUrl) => {
     const plantes = await plantesRes.json();
     const lexique = await lexiqueRes.json();
 
+
     // Vide les tables existantes
     await db.execute("DELETE FROM plantes;");
     await db.execute("DELETE FROM lexique;");
 
     // Insère les plantes
-    for (const p of plantes) {
+   /*  for (const p of plantes) {
       await db.run(
         `INSERT INTO plantes VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)`,
         [
@@ -122,15 +124,40 @@ export const syncData = async (apiUrl) => {
           p.image_filename
         ]
       );
-    }
+    } */
 
     // Insère le lexique
-    for (const l of lexique) {
+    /* for (const l of lexique) {
       await db.run(
         `INSERT INTO lexique VALUES (?,?,?,?)`,
         [l.id, l.terme, l.definition, l.categorie]
       );
-    }
+    } */
+
+      const plantesStatements = plantes.map(p => ({
+  statement: `INSERT OR REPLACE INTO plantes VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+  values: [
+    p.id, p.nom_scientifique, p.nom_vernaculaire, p.famille,
+    p.methode_consommation, p.proprietes_principales, p.resolution_probleme,
+    p.parties_comestibles, p.contre_indications, p.interactions_medicamenteuses,
+    p.contre_indication_femmes_enceintes, p.contre_indication_enfant, p.image_filename
+  ]
+}));
+
+await db.executeSet(plantesStatements);
+
+// Insère le lexique en une seule transaction
+const lexiqueStatements = lexique.map(l => ({
+  statement: `INSERT OR REPLACE INTO lexique VALUES (?,?,?,?)`,
+  values: [l.id, l.terme, l.definition, l.categorie]
+}));
+
+await db.executeSet(lexiqueStatements);
+
+console.log("Sync réussie :", plantes.length, "plantes,", lexique.length, "termes");
+
+  console.log("Plantes insérées :", plantes.length);
+console.log("Lexique inséré :", lexique.length);
 
     // Enregistre la date de sync
     await db.execute("DELETE FROM sync_info;");
@@ -143,6 +170,18 @@ export const syncData = async (apiUrl) => {
   } catch (err) {
     console.error("Sync error:", err);
   }
+
+  const [plantesRes, lexiqueRes] = await Promise.all([
+  fetch(`${apiUrl}/api/plantes?limit=500`),
+  fetch(`${apiUrl}/api/lexique`)
+]);
+
+console.log("Plantes status:", plantesRes.status);
+console.log("Lexique status:", lexiqueRes.status);
+
+if (!plantesRes.ok || !lexiqueRes.ok) {
+  throw new Error(`Erreur réseau - plantes: ${plantesRes.status}, lexique: ${lexiqueRes.status}`);
+}
 };
 
 export const getPlantesLocales = async (q = "") => {
